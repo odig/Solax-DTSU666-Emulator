@@ -113,4 +113,65 @@ typedef struct _MeterData
            l1_export_rx && l2_export_rx && l3_export_rx &&
            freq_rx;
   }
+
+  int meterDataReceivedCount()
+  {
+    return total_import_rx +
+           total_export_rx +
+           total_power_rx +
+           v1_rx + v2_rx + v3_rx +
+           c1_rx + c2_rx + c3_rx +
+           power_1_rx + power_2_rx + power_3_rx +
+           l1_import_rx + l2_import_rx + l3_import_rx +
+           l1_export_rx + l2_export_rx + l3_export_rx +
+           freq_rx;
+  }
+
+  void printMeterReceivedStatus() {
+    dpf("[SYSTEM] Waiting for data: %d/19 fields received state is: %s\n",
+      meterDataReceivedCount(),
+      allDataReceived() ? "OK" : "NOT OK"    
+    );
+
+    // Print the missing fields
+    if (!total_import_rx)
+      dpln("Total Import not received");
+    if (!total_export_rx) 
+      dpln("Total Export not received");
+    if (!total_power_rx)  
+      dpln("Total Power not received");
+    if (!v1_rx)   
+      dpln("L1 Voltage not received");
+    if (!v2_rx)
+      dpln("L2 Voltage not received");
+    if (!v3_rx)
+      dpln("L3 Voltage not received");
+    if (!c1_rx)
+      dpln("L1 Current not received");
+    if (!c2_rx)
+      dpln("L2 Current not received");
+    if (!c3_rx)
+      dpln("L3 Current not received");
+    if (!power_1_rx)
+      dpln("L1 Power not received");
+    if (!power_2_rx)
+      dpln("L2 Power not received");
+    if (!power_3_rx)
+      dpln("L3 Power not received");
+    if (!l1_import_rx)  
+      dpln("L1 Import not received");
+    if (!l2_import_rx)  
+      dpln("L2 Import not received");
+    if (!l3_import_rx)    
+      dpln("L3 Import not received");
+    if (!l1_export_rx)
+      dpln("L1 Export not received");
+    if (!l2_export_rx)  
+      dpln("L2 Export not received");
+    if (!l3_export_rx)
+      dpln("L3 Export not received");
+    if (!freq_rx)
+      dpln("Frequency not received"); 
+  }
+
 } MeterData;

@@ -130,7 +130,7 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
     handleMqttTopic(topic, TOPIC_POWER, value, &meterData.total_power, &meterData.total_power_rx, "Total Power: %6.2f", "W");
   }
 
-  updateAndInitModbusMastereRegisters();
+  updateAndInitModbusMasterRegisters();
 }
 
 

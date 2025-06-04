@@ -204,6 +204,8 @@ bool hregCallback(Modbus::ResultCode result, uint16_t transactionId, void *arg)
     // dpf("Power Factor: %.2f | %.2f | %.2f\n", meterData.pf1, meterData.pf2, meterData.pf3);
     dpf("Frequency: %.2f Hz\n\n", meterData.freq);
 
+    updateAndInitModbusMasterRegisters();
+
     return false;
 }
 

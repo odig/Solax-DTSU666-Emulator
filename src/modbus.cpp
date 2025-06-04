@@ -1,6 +1,6 @@
 #include "globals.h"
 
-uint16_t meterType = 0x00A7;   // Meter type, initialized to 0x00AA (171) DTSU666(3phase) meter
+uint16_t meterType = 0x00A7; // Meter type, initialized to 0x00AA (171) DTSU666(3phase) meter
 
 #undef METERSEARCH
 #ifdef METERSEARCH
@@ -53,7 +53,7 @@ Modbus::ResultCode cbPreRequest(Modbus::FunctionCode fc, const Modbus::RequestDa
   if (fc == Modbus::FC_READ_REGS || fc == Modbus::FC_READ_INPUT_REGS)
   {
 #ifdef METERSEARCH
-    dpf("PRE Read Request: Type: %d Reg: 0x%04.4" PRIX16 ", Count: %d MeterType=0x%04.4X (%d)\n", data.regRead.type, data.regRead.address, data.regReadCount, meterType-1, meterType-1);
+    dpf("PRE Read Request: Type: %d Reg: 0x%04.4" PRIX16 ", Count: %d MeterType=0x%04.4X (%d)\n", data.regRead.type, data.regRead.address, data.regReadCount, meterType - 1, meterType - 1);
 #else
     dpf("PRE Read Request: Type: %d Reg: 0x%04.4" PRIX16 ", Count: %d\n", data.regRead.type, data.regRead.address, data.regReadCount);
 #endif
@@ -116,7 +116,7 @@ void updateModbusRegisters()
     modbus.onRequestSuccess(cbRequestSuccess);
 
     modbus.addHreg(NETWORK_SELECTION, 0x0001); // Network selection (0: three phase four wire, 1: three phase three wire)
-    modbus.addHreg(METER_TYPE, meterType); // Device type coding - Solax DTSU666 meter 170 (0x00AA)
+    modbus.addHreg(METER_TYPE, meterType);     // Device type coding - Solax DTSU666 meter 170 (0x00AA)
 
     floatToModbusRegisters(REACTIVE_POWER_A, 0.0);
     floatToModbusRegisters(REACTIVE_POWER_B, 0.0);
@@ -160,7 +160,7 @@ void updateModbusRegisters()
   floatToModbusRegisters(TOTAL_REVERSE, meterData.total_export);
 }
 
-void updateAndInitModbusMastereRegisters()
+void updateAndInitModbusMasterRegisters()
 {
   if (enableModbus)
   {
@@ -195,42 +195,7 @@ void printModbusMasterStatus()
   }
   else
   {
-    dpf("[SYSTEM] Waiting for data: %d/13 fields received\n",
-        meterData.total_import_rx +
-            meterData.total_export_rx +
-            meterData.total_power_rx +
-            meterData.v1_rx + meterData.v2_rx + meterData.v3_rx +
-            meterData.c1_rx + meterData.c2_rx + meterData.c3_rx +
-            meterData.power_1_rx + meterData.power_2_rx + meterData.power_3_rx +
-            meterData.freq_rx);
-
-    // Print the missing fields
-    if (!meterData.total_import_rx)
-      dpln("Total Import not received");
-    if (!meterData.total_export_rx) 
-      dpln("Total Export not received");
-    if (!meterData.total_power_rx)  
-      dpln("Total Power not received");
-    if (!meterData.v1_rx)   
-      dpln("L1 Voltage not received");
-    if (!meterData.v2_rx)
-      dpln("L2 Voltage not received");
-    if (!meterData.v3_rx)
-      dpln("L3 Voltage not received");
-    if (!meterData.c1_rx)
-      dpln("L1 Current not received");
-    if (!meterData.c2_rx)
-      dpln("L2 Current not received");
-    if (!meterData.c3_rx)
-      dpln("L3 Current not received");
-    if (!meterData.power_1_rx)
-      dpln("L1 Power not received");
-    if (!meterData.power_2_rx)
-      dpln("L2 Power not received");
-    if (!meterData.power_3_rx)
-      dpln("L3 Power not received");
-    if (!meterData.freq_rx)
-      dpln("Frequency not received"); 
+    meterData.printMeterReceivedStatus();
   }
 }
 

@@ -2,6 +2,6 @@
 
 #include "globals.h"
 
-void updateAndInitModbusMastereRegisters();
+void updateAndInitModbusMasterRegisters();
 void printModbusMasterStatus();
 void handleModbusMaster();

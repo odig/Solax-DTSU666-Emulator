@@ -1,4 +1,4 @@
-# ESP32 Smart Meter Modbus Emulator (DTSU666) - ESP32 Version - seems it works, just need more testing :)
+# Solax-DTSU666-Emulator
 
 **RS485 Emulator using XY-017 Auto Flow Control Module or similar**
 

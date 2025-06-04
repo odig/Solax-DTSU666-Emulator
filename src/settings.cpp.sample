@@ -1,0 +1,43 @@
+#include "globals.h"
+
+// Switches and Features Configuration
+const bool enableWebServer = true;       // Enable web server for configuration and monitoring
+const bool enableModbus = true;          // Enable Modbus RTU communication
+const bool enableMQTT = false;           // Enable MQTT communication
+const bool enableOTA = true;             // Enable OTA updates for remote management
+const bool enableTelnetDebugging = true; // Enable debugging features
+
+// Debugging
+const bool enableSerialLogs = true;          // Set to true for debug output
+const bool logModbusRegisterActions = false; // Log Modbus register actions
+const bool logMqttUpdates = false;           // Log MQTT updates
+const bool enableSerialHttpLogs = true;      // Enable serial logging for HTTP requests
+
+// WiFi Credentials
+const char *ssid = "XXX";             // WiFi SSID
+const char *wifiPassword = "XXX";     // WiFi password
+const char *wifiHostname = "dtsu666"; // Hostname for the device on the network
+
+// Victron modbusTCP connection
+IPAddress gxIP(192, 168, 178, 99); // Replace with your GX device's IP
+
+// MQTT Configuration
+const char *mqttBroker = "192.168.178.100";    // MQTT broker address
+const int mqttPort = 1883;                     // MQTT broker port
+const char *mqttClientID = "ESPSMM";           // MQTT client ID
+const char *mqttUsername = "YYY";              // MQTT username
+const char *mqttPassword = "YYYYYY";           // MQTT username and password
+const char *mqttTopic = "smartmeter/data";     // MQTT topic for data
+const char *statusTopic = "smartmeter/status"; // MQTT topic for status updates
+
+// Modbus Configuration
+const int slaveID = 1;                // Modbus slave ID
+const long modbusBaudRate = 9600;     // Modbus baud rate
+const int RX_PIN = 16;                // RX pin for Modbus communication
+const int TX_PIN = 17;                // TX pin for Modbus communication
+const int SERIAL_CONFIG = SERIAL_8N1; // Serial configuration (8N1)
+
+// OTA Update Configuration
+const char *otaHostname = "dtsu666";
+// const char* otaPassword = "SmartMeter2025";  // Strong password for OTA updates
+const int otaPort = 8266; // Default port for ESP OTA

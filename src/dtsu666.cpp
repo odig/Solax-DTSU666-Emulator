@@ -1,24 +1,23 @@
 #include "globals.h"
+#include "dtsu666.h"
 
-uint16_t meterType = 0x00A7; // Meter type, initialized to 0x00AA (171) DTSU666(3phase) meter
-
-#undef METERSEARCH
-#ifdef METERSEARCH
-bool meterTypeFound = false; // Flag to check if meter type has been found
-int prints = 0;
-#endif
-
-void addRegisterIfNeeded(uint16_t reg, uint16_t value = 0)
+DTSU666::DTSU666(int id) : ModbusRTU()
 {
-  if (!modbus.Hreg(reg))
+  modbusInitialized = false;
+  slaveId = id; // Set the slave ID for the Modbus RTU client
+}
+
+void DTSU666::addRegisterIfNeeded(uint16_t reg, uint16_t value)
+{
+  if (!Hreg(reg))
   {
-    modbus.addHreg(reg, value);
+    addHreg(reg, value);
     if (logModbusRegisterActions)
       dpf("[Modbus] Added register %d\n", reg);
   }
 }
 
-Modbus::ResultCode cbPreRequest(Modbus::FunctionCode fc, const Modbus::RequestData data)
+DTSU666::ResultCode DTSU666::cbPreRequest(FunctionCode fc, const RequestData data)
 {
 #ifdef METERSEARCH
   static bool printed = false;
@@ -26,31 +25,20 @@ Modbus::ResultCode cbPreRequest(Modbus::FunctionCode fc, const Modbus::RequestDa
   {
     if (data.reg.address == METER_TYPE && !meterTypeFound)
     {
-      modbus.Hreg(METER_TYPE, meterType);
+      Hreg(METER_TYPE, meterType);
       dpf("[Modbus] Meter type: 0x%04.4X (%d)\n", meterType, meterType);
       meterType++;
-
-      // Reg: 0x0028, Count: 2 MeterType=0x0047 (327)
-      // Reg: 0x003E, Count: 2 MeterType=0x0047 (327)
-      // Reg: 0x0106, Count: 2 MeterType=0x0067 (104)
-      // Reg: 0x000E, Count: 1 MeterType=0x00A0 (161)
-      // Reg: 0x013E, Count: 1 MeterType=0x00A4 (165)
-      // Reg: 0x2004, Count: 2 MeterType=0x00A6 (104) DDSU666(1phase) meter
-      // Reg: 0x2012, Count: 8 MeterType=0x00A7 (423) DTSU666(3phase) meter
-      // Reg: 0x000C, Count: 2 MeterType=0x00A8 (169)
-      // Reg: 0x2012, Count: 16 MeterType=0x00AA (171) DTSU666(3phase) meter
     }
     printed = true;
-    return Modbus::EX_SUCCESS;
+    return EX_SUCCESS;
   }
-  meterTypeFound = true; // Set the flag to true after the first request
+  meterTypeFound = true;
   if (prints++ > 10)
   {
-    return Modbus::EX_SUCCESS; // Limit the number of prints to avoid flooding
+    return EX_SUCCESS;
   }
 #endif
-  // dpf("PRE Function: %02X\n", fc);
-  if (fc == Modbus::FC_READ_REGS || fc == Modbus::FC_READ_INPUT_REGS)
+  if (fc == FC_READ_REGS || fc == FC_READ_INPUT_REGS)
   {
 #ifdef METERSEARCH
     dpf("PRE Read Request: Type: %d Reg: 0x%04.4" PRIX16 ", Count: %d MeterType=0x%04.4X (%d)\n", data.regRead.type, data.regRead.address, data.regReadCount, meterType - 1, meterType - 1);
@@ -58,34 +46,20 @@ Modbus::ResultCode cbPreRequest(Modbus::FunctionCode fc, const Modbus::RequestDa
     dpf("PRE Read Request: Type: %d Reg: 0x%04.4" PRIX16 ", Count: %d\n", data.regRead.type, data.regRead.address, data.regReadCount);
 #endif
   }
-  if (fc == Modbus::FC_WRITE_REGS)
+  if (fc == FC_WRITE_REGS)
   {
     dpf("PRE Write Request: Type: %d Reg: 0x%04.4" PRIX16 ", Count: %d\n", data.regWrite.type, data.regWrite.address, data.regWriteCount);
   }
 
-  return Modbus::EX_SUCCESS;
+  return EX_SUCCESS;
 }
 
-Modbus::ResultCode cbRequestSuccess(Modbus::FunctionCode fc, const Modbus::RequestData data)
+DTSU666::ResultCode DTSU666::cbRequestSuccess(FunctionCode fc, const RequestData data)
 {
-  // dpf("[Modbus] Request Success: Function: %02X, Reg: 0x%04.4" PRIX16 ", Count: %d\n", fc, data.reg.address, data.regCount);
-  // dump registers
-  //  for (uint16_t i = 0; i < data.regCount; i++)
-  //  {
-  //    dpf("[Modbus] Register Success 0x%04.4" PRIX16 ": 0x%04.4" PRIX16 "\n", data.reg.address + i, modbus.Hreg(data.reg.address + i));
-  //  }
-
-  // dpf("[Modbus] \n");
-  // // Dump all registers
-  // for (Registers reg : allRegisters) {
-  //   dpf("[Modbus]     Register 0x%04.4" PRIX16 ": 0x%04.4" PRIX16 "\n", reg, modbus.Hreg(reg));
-  // }
-
-  return Modbus::EX_SUCCESS;
+  return EX_SUCCESS;
 }
 
-// Convert float to two 16-bit Modbus registers (big-endian: MSB first)
-void floatToModbusRegisters(uint16_t offset, float value)
+void DTSU666::floatToModbusRegisters(uint16_t offset, float value)
 {
   uint16_t registers[2];
   union
@@ -102,21 +76,27 @@ void floatToModbusRegisters(uint16_t offset, float value)
   registers[0] = (floatUnion.bytes[3] << 8) | floatUnion.bytes[2];
   registers[1] = (floatUnion.bytes[1] << 8) | floatUnion.bytes[0];
 
-  modbus.Hreg(offset, registers[0]);
-  modbus.Hreg(offset + 1, registers[1]);
+  Hreg(offset, registers[0]);
+  Hreg(offset + 1, registers[1]);
 }
 
-void updateModbusRegisters()
+void DTSU666::updateModbusRegisters()
 {
-  uint16_t *floatAsRegisters;
+  if (!meterData.allDataReceived())
+  {
+    dpln("[Modbus] Waiting for meter data...");
+    return;
+  }
 
   if (!registersAdded)
   {
-    modbus.onRequest(cbPreRequest);
-    modbus.onRequestSuccess(cbRequestSuccess);
+    onRequest([this](FunctionCode fc, const RequestData data)
+              { return this->cbPreRequest(fc, data); });
+    onRequestSuccess([this](FunctionCode fc, const RequestData data)
+                     { return this->cbRequestSuccess(fc, data); });
 
-    modbus.addHreg(NETWORK_SELECTION, 0x0001); // Network selection (0: three phase four wire, 1: three phase three wire)
-    modbus.addHreg(METER_TYPE, meterType);     // Device type coding - Solax DTSU666 meter 170 (0x00AA)
+    addHreg(NETWORK_SELECTION, 0x0001);
+    addHreg(METER_TYPE, meterType);
 
     floatToModbusRegisters(REACTIVE_POWER_A, 0.0);
     floatToModbusRegisters(REACTIVE_POWER_B, 0.0);
@@ -132,10 +112,6 @@ void updateModbusRegisters()
 
     dpln("[Modbus] Initialized registers");
   }
-
-  // Write float value as two 16-bit registers
-  // The data is stored as a 32-bit float, split into two 16-bit registers
-  // The Byte order is Floating Inverse Byte Order (FIBO) (AB CD)
 
   floatToModbusRegisters(VOLTAGE_AB, meterData.v1 * 10.0);
   floatToModbusRegisters(VOLTAGE_BC, meterData.v2 * 10.0);
@@ -160,7 +136,7 @@ void updateModbusRegisters()
   floatToModbusRegisters(TOTAL_REVERSE, meterData.total_export);
 }
 
-void updateAndInitModbusMasterRegisters()
+void DTSU666::update()
 {
   if (enableModbus)
   {
@@ -171,18 +147,18 @@ void updateAndInitModbusMasterRegisters()
       if (meterData.allDataReceived())
       {
         Serial2.begin(modbusBaudRate, SERIAL_CONFIG, RX_PIN, TX_PIN);
-        modbus.begin(&Serial2);
-        modbus.slave(slaveID);
+        begin(&Serial2);
+        slave(slaveId);
         modbusInitialized = true;
 
-        dpln("[Modbus] Server started!");
+        dpf("[Modbus] Server started! for slave ID %d\n", slaveId);
         updateModbusRegisters();
       }
     }
   }
 }
 
-void printModbusMasterStatus()
+void DTSU666::printStatus()
 {
   if (modbusInitialized)
   {
@@ -199,11 +175,10 @@ void printModbusMasterStatus()
   }
 }
 
-void handleModbusMaster()
+void DTSU666::handle()
 {
-  // Handle Modbus with priority
   if (modbusInitialized)
   {
-    modbus.task();
+    task();
   }
 }

@@ -9,7 +9,6 @@ Strongly influenced by [Sungrow_DTSU666_emulator](https://github.com/Egyras/Sung
 - ESP32-optimized Modbus RTU implementation
 - Automatic TX/RX switching with XY-017 module
 - Victron MQTT OR ModbusTCP as data source
-- MQTT as data source
 - OTA update option
 - Status website
 
@@ -93,6 +92,22 @@ const int SERIAL_CONFIG = SERIAL_8N1;
   }
 }
 ```
+
+## Findings
+After the Solax inverter reads Holding Register 0xB, it reads additional registers depending on the lowest byte.
+This suggests that it uses the content of 0xB to identify the smart meter type.
+After tinkering arround I found following behaviour: 
+
+- Register 0x000B (11) MeterType=0x0047 (327) Solax reads Register: 0x0028, Count: 2
+- Register 0x000B (11) MeterType=0x0047 (327) Solax reads Register: 0x003E, Count: 2
+- Register 0x000B (11) MeterType=0x0067 (104) Solax reads Register: 0x0106, Count: 2
+- Register 0x000B (11) MeterType=0x00A0 (161) Solax reads Register: 0x000E, Count: 1
+- Register 0x000B (11) MeterType=0x00A4 (165) Solax reads Register: 0x013E, Count: 1
+- Register 0x000B (11) MeterType=0x00A6 (104) Solax reads Register: 0x2004, Count: 2 DDSU666(1phase) meter
+- Register 0x000B (11) MeterType=0x00A7 (423) Solax reads Register: 0x2012, Count: 8 DTSU666(3phase) meter
+- Register 0x000B (11) MeterType=0x00A8 (169) Solax reads Register: 0x000C, Count: 2
+- Register 0x000B (11) MeterType=0x00AA (171) Solax reads Register: 0x2012, Count: 16 DTSU666(3phase) meter
+
 ## Related Projects
 
 For alternative implementations and community-driven approaches to Sungrow meter communication, you might want to explore:

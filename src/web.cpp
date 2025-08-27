@@ -45,45 +45,45 @@ void handleRoot()
 void handleData()
 {
   String json = "{";
-  json += "\"import\":" + String(meterData.total_import) + ",";
-  json += "\"import_rx\":\"" + String(meterData.total_import_rx ? "OK" : "WAIT") + "\",";
+  json += "\"import\":" + String(dtsu666.meterData.total_import) + ",";
+  json += "\"import_rx\":\"" + String(dtsu666.meterData.total_import_rx ? "OK" : "WAIT") + "\",";
 
-  json += "\"export\":" + String(meterData.total_export) + ",";
-  json += "\"export_rx\":\"" + String(meterData.total_import_rx ? "OK" : "WAIT") + "\",";
+  json += "\"export\":" + String(dtsu666.meterData.total_export) + ",";
+  json += "\"export_rx\":\"" + String(dtsu666.meterData.total_import_rx ? "OK" : "WAIT") + "\",";
 
-  json += "\"total_power\":" + String(meterData.total_power) + ",";
-  json += "\"total_power_rx\":\"" + String(meterData.total_power_rx ? "OK" : "WAIT") + "\",";
+  json += "\"total_power\":" + String(dtsu666.meterData.total_power) + ",";
+  json += "\"total_power_rx\":\"" + String(dtsu666.meterData.total_power_rx ? "OK" : "WAIT") + "\",";
   
-  json += "\"v1\":" + String(meterData.v1) + ",";
-  json += "\"v1_rx\":\"" + String(meterData.v1_rx ? "OK" : "WAIT") + "\",";
-  json += "\"v2\":" + String(meterData.v2) + ",";
-  json += "\"v2_rx\":\"" + String(meterData.v2_rx ? "OK" : "WAIT") + "\",";
-  json += "\"v3\":" + String(meterData.v3) + ",";
-  json += "\"v3_rx\":\"" + String(meterData.v3_rx ? "OK" : "WAIT") + "\",";
+  json += "\"v1\":" + String(dtsu666.meterData.v1) + ",";
+  json += "\"v1_rx\":\"" + String(dtsu666.meterData.v1_rx ? "OK" : "WAIT") + "\",";
+  json += "\"v2\":" + String(dtsu666.meterData.v2) + ",";
+  json += "\"v2_rx\":\"" + String(dtsu666.meterData.v2_rx ? "OK" : "WAIT") + "\",";
+  json += "\"v3\":" + String(dtsu666.meterData.v3) + ",";
+  json += "\"v3_rx\":\"" + String(dtsu666.meterData.v3_rx ? "OK" : "WAIT") + "\",";
 
-  json += "\"c1\":" + String(meterData.c1) + ",";
-  json += "\"c1_rx\":\"" + String(meterData.c1_rx ? "OK" : "WAIT") + "\",";
-  json += "\"c2\":" + String(meterData.c2) + ",";
-  json += "\"c2_rx\":\"" + String(meterData.c2_rx ? "OK" : "WAIT") + "\",";
-  json += "\"c3\":" + String(meterData.c3) + ",";
-  json += "\"c3_rx\":\"" + String(meterData.c3_rx ? "OK" : "WAIT") + "\",";
+  json += "\"c1\":" + String(dtsu666.meterData.c1) + ",";
+  json += "\"c1_rx\":\"" + String(dtsu666.meterData.c1_rx ? "OK" : "WAIT") + "\",";
+  json += "\"c2\":" + String(dtsu666.meterData.c2) + ",";
+  json += "\"c2_rx\":\"" + String(dtsu666.meterData.c2_rx ? "OK" : "WAIT") + "\",";
+  json += "\"c3\":" + String(dtsu666.meterData.c3) + ",";
+  json += "\"c3_rx\":\"" + String(dtsu666.meterData.c3_rx ? "OK" : "WAIT") + "\",";
 
-  json += "\"power_a\":" + String(meterData.power_1) + ",";
-  json += "\"power_a_rx\":\"" + String(meterData.power_1_rx ? "OK" : "WAIT") + "\",";
-  json += "\"power_b\":" + String(meterData.power_2) + ",";
-  json += "\"power_b_rx\":\"" + String(meterData.power_2_rx ? "OK" : "WAIT") + "\",";
-  json += "\"power_c\":" + String(meterData.power_3) + ",";
-  json += "\"power_c_rx\":\"" + String(meterData.power_3_rx ? "OK" : "WAIT") + "\",";
+  json += "\"power_a\":" + String(dtsu666.meterData.power_1) + ",";
+  json += "\"power_a_rx\":\"" + String(dtsu666.meterData.power_1_rx ? "OK" : "WAIT") + "\",";
+  json += "\"power_b\":" + String(dtsu666.meterData.power_2) + ",";
+  json += "\"power_b_rx\":\"" + String(dtsu666.meterData.power_2_rx ? "OK" : "WAIT") + "\",";
+  json += "\"power_c\":" + String(dtsu666.meterData.power_3) + ",";
+  json += "\"power_c_rx\":\"" + String(dtsu666.meterData.power_3_rx ? "OK" : "WAIT") + "\",";
 
-  json += "\"freq\":" + String(meterData.freq) + ",";
-  json += "\"freq_rx\":\"" + String(meterData.freq_rx ? "OK" : "WAIT") + "\"";
+  json += "\"freq\":" + String(dtsu666.meterData.freq) + ",";
+  json += "\"freq_rx\":\"" + String(dtsu666.meterData.freq_rx ? "OK" : "WAIT") + "\"";
   json += "}";
   server.send(200, "application/json", json);
 }
 
 void handleModbus()
 {
-  String stat = modbusInitialized ? "Modbus server running" : "Waiting for all data fields";
+  String stat = dtsu666.modbusInitialized ? "Modbus server running" : "Waiting for all data fields";
   server.send(200, "text/plain", stat);
 }
 

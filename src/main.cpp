@@ -9,7 +9,7 @@ void handleStatusReport()
   static unsigned long lastReport = 0;
   if (millis() - lastReport > 5000)
   {
-    printModbusMasterStatus();
+    dtsu666.printStatus();
 
     // Report OTA status
     if (enableOTA && !otaReported)
@@ -82,14 +82,14 @@ void setup()
     setupOTA();
     setupMQTT();
     setupWebServer();
-    setupVictronModbusSlave();
+    victron.setupVictronModbusSlave();
   }
 }
 
 void loop()
 {
-  handleModbusMaster();
-  handleVictronModbusSlave();
+  dtsu666.handle();
+  victron.handleVictronModbusSlave();
   handleMqtt();
 
   handleTelnetDebugging();

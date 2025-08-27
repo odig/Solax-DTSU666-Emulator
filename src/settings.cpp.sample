@@ -31,7 +31,6 @@ const char *mqttTopic = "smartmeter/data";     // MQTT topic for data
 const char *statusTopic = "smartmeter/status"; // MQTT topic for status updates
 
 // Modbus Configuration
-const int slaveID = 1;                // Modbus slave ID
 const long modbusBaudRate = 9600;     // Modbus baud rate
 const int RX_PIN = 16;                // RX pin for Modbus communication
 const int TX_PIN = 17;                // TX pin for Modbus communication

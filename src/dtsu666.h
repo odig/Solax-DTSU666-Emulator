@@ -1,5 +1,10 @@
 #pragma once
 
+#include "globals.h"
+
+//#define METERSEARCH // Uncomment to enable meter search mode
+
+
 enum Registers
 {
   // Configuration
@@ -127,6 +132,52 @@ typedef struct _MeterData
            freq_rx;
   }
 
+  void initDataAndSetToReceived()
+  {
+    total_import = 0;
+    total_export = 0;
+    total_power = 0;
+    v1 = 0;
+    v2 = 0;
+    v3 = 0;
+    c1 = 0;
+    c2 = 0;
+    c3 = 0;
+    pf1 = 0;
+    pf2 = 0;
+    pf3 = 0;
+    freq = 0;
+    power_1 = 0;
+    power_2 = 0;
+    power_3 = 0;
+    l1_import = 0;
+    l2_import = 0;
+    l3_import = 0;
+    l1_export = 0;
+    l2_export = 0;
+    l3_export = 0;
+
+    total_import_rx = true; 
+    total_export_rx = true; 
+    total_power_rx = true; 
+    v1_rx = true; 
+    v2_rx = true; 
+    v3_rx = true; 
+    c1_rx = true; 
+    c2_rx = true; 
+    c3_rx = true; 
+    freq_rx = true; 
+    power_1_rx = true; 
+    power_2_rx = true; 
+    power_3_rx = true; 
+    l1_import_rx = true; 
+    l2_import_rx = true; 
+    l3_import_rx = true; 
+    l1_export_rx = true; 
+    l2_export_rx = true; 
+    l3_export_rx = true;
+  }
+
   void printMeterReceivedStatus() {
     dpf("[SYSTEM] Waiting for data: %d/19 fields received state is: %s\n",
       meterDataReceivedCount(),
@@ -173,5 +224,30 @@ typedef struct _MeterData
     if (!freq_rx)
       dpln("Frequency not received"); 
   }
-
 } MeterData;
+
+class DTSU666 : private ModbusRTU
+{
+public:
+    bool modbusInitialized;
+    MeterData meterData;
+    DTSU666(int id);
+    void update();
+    void printStatus();
+    void handle();
+
+private:
+    #ifdef METERSEARCH
+        bool meterTypeFound = false; // Flag to check if meter type has been found
+        int prints = 0;
+    #endif
+
+    uint16_t meterType = 0x00A7; // Meter type, initialized to 0x00AA (171) DTSU666(3phase) meter
+    int slaveId = 1; // Slave ID of the meter, initialized to 0
+
+    void addRegisterIfNeeded(uint16_t reg, uint16_t value = 0);
+    ResultCode cbPreRequest(FunctionCode fc, const RequestData data);
+    ResultCode cbRequestSuccess(FunctionCode fc, const RequestData data);
+    void floatToModbusRegisters(uint16_t offset, float value);
+    void updateModbusRegisters();
+};

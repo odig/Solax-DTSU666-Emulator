@@ -34,7 +34,6 @@ extern const char *mqttTopic;    // MQTT topic for data
 extern const char *statusTopic;  // MQTT topic for status updates
 
 // Modbus Configuration
-extern const int slaveID;         // Modbus slave ID
 extern const long modbusBaudRate; // Modbus baud rate
 extern const int RX_PIN;          // RX pin for Modbus communication
 extern const int TX_PIN;          // TX pin for Modbus communication

@@ -2,18 +2,18 @@
 
 // ===================== Helper Macro =====================
 
-#define UPDATE_FIELD(field, var, flag) \
-  if (sml[#field].is<JsonVariant>())   \
-  {                                    \
-    meterData.var = sml[#field];       \
-    if (!meterData.flag)               \
-      meterData.flag = true;           \
-    updated = true;                    \
-                                       \
-    {                                  \
-      dpf("- %s: ", #field);       \
-      dpf("%d\n", meterData.var);  \
-    }                                  \
+#define UPDATE_FIELD(field, var, flag)           \
+  if (sml[#field].is<JsonVariant>())             \
+  {                                              \
+    dtsu666.meterData.var = sml[#field];  \
+    if (!dtsu666.meterData.flag)          \
+      dtsu666.meterData.flag = true;      \
+    updated = true;                              \
+                                                 \
+    {                                            \
+      dpf("- %s: ", #field);                     \
+      dpf("%d\n", dtsu666.meterData.var); \
+    }                                            \
   }
 
 bool handleMqttTopic(char *topic, String topic_const, float value, float *field, bool *field_rx, const char *format, const char *unit)
@@ -115,24 +115,23 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
     JsonVariant value = doc["value"];
 
     // Handle specific MQTT topics
-    handleMqttTopic(topic, TOPIC_L1_VOLTAGE, value, &meterData.v1, &meterData.v1_rx, "L1 Voltage: %6.2f", "V");
-    handleMqttTopic(topic, TOPIC_L2_VOLTAGE, value, &meterData.v2, &meterData.v2_rx, "L2 Voltage: %6.2f", "V");
-    handleMqttTopic(topic, TOPIC_L3_VOLTAGE, value, &meterData.v3, &meterData.v3_rx, "L3 Voltage: %6.2f", "V");
-    handleMqttTopic(topic, TOPIC_L1_CURRENT, value, &meterData.c1, &meterData.c1_rx, "L1 Current: %6.2f", "A");
-    handleMqttTopic(topic, TOPIC_L2_CURRENT, value, &meterData.c2, &meterData.c2_rx, "L2 Current: %6.2f", "A");
-    handleMqttTopic(topic, TOPIC_L3_CURRENT, value, &meterData.c3, &meterData.c3_rx, "L3 Current: %6.2f", "A");
-    handleMqttTopic(topic, TOPIC_L1_POWER, value, &meterData.power_1, &meterData.power_1_rx, "L1 Power: %6.2f", "W");
-    handleMqttTopic(topic, TOPIC_L2_POWER, value, &meterData.power_2, &meterData.power_2_rx, "L2 Power: %6.2f", "W");
-    handleMqttTopic(topic, TOPIC_L3_POWER, value, &meterData.power_3, &meterData.power_3_rx, "L3 Power: %6.2f", "W");
-    handleMqttTopic(topic, TOPIC_FREQUENCY, value, &meterData.freq, &meterData.freq_rx, "Frequency: %6.2f", "Hz");
-    handleMqttTopic(topic, TOPIC_ENERGY_FORWARD, value, &meterData.total_import, &meterData.total_import_rx, "Energy Forward: %6.2f", "kWh");
-    handleMqttTopic(topic, TOPIC_ENERGY_REVERSE, value, &meterData.total_export, &meterData.total_export_rx, "Energy Reverse: %6.2f", "kWh");
-    handleMqttTopic(topic, TOPIC_POWER, value, &meterData.total_power, &meterData.total_power_rx, "Total Power: %6.2f", "W");
+    handleMqttTopic(topic, TOPIC_L1_VOLTAGE, value, &dtsu666.meterData.v1, &dtsu666.meterData.v1_rx, "L1 Voltage: %6.2f", "V");
+    handleMqttTopic(topic, TOPIC_L2_VOLTAGE, value, &dtsu666.meterData.v2, &dtsu666.meterData.v2_rx, "L2 Voltage: %6.2f", "V");
+    handleMqttTopic(topic, TOPIC_L3_VOLTAGE, value, &dtsu666.meterData.v3, &dtsu666.meterData.v3_rx, "L3 Voltage: %6.2f", "V");
+    handleMqttTopic(topic, TOPIC_L1_CURRENT, value, &dtsu666.meterData.c1, &dtsu666.meterData.c1_rx, "L1 Current: %6.2f", "A");
+    handleMqttTopic(topic, TOPIC_L2_CURRENT, value, &dtsu666.meterData.c2, &dtsu666.meterData.c2_rx, "L2 Current: %6.2f", "A");
+    handleMqttTopic(topic, TOPIC_L3_CURRENT, value, &dtsu666.meterData.c3, &dtsu666.meterData.c3_rx, "L3 Current: %6.2f", "A");
+    handleMqttTopic(topic, TOPIC_L1_POWER, value, &dtsu666.meterData.power_1, &dtsu666.meterData.power_1_rx, "L1 Power: %6.2f", "W");
+    handleMqttTopic(topic, TOPIC_L2_POWER, value, &dtsu666.meterData.power_2, &dtsu666.meterData.power_2_rx, "L2 Power: %6.2f", "W");
+    handleMqttTopic(topic, TOPIC_L3_POWER, value, &dtsu666.meterData.power_3, &dtsu666.meterData.power_3_rx, "L3 Power: %6.2f", "W");
+    handleMqttTopic(topic, TOPIC_FREQUENCY, value, &dtsu666.meterData.freq, &dtsu666.meterData.freq_rx, "Frequency: %6.2f", "Hz");
+    handleMqttTopic(topic, TOPIC_ENERGY_FORWARD, value, &dtsu666.meterData.total_import, &dtsu666.meterData.total_import_rx, "Energy Forward: %6.2f", "kWh");
+    handleMqttTopic(topic, TOPIC_ENERGY_REVERSE, value, &dtsu666.meterData.total_export, &dtsu666.meterData.total_export_rx, "Energy Reverse: %6.2f", "kWh");
+    handleMqttTopic(topic, TOPIC_POWER, value, &dtsu666.meterData.total_power, &dtsu666.meterData.total_power_rx, "Total Power: %6.2f", "W");
   }
 
-  updateAndInitModbusMasterRegisters();
+  dtsu666.update();
 }
-
 
 bool connectMQTT()
 {

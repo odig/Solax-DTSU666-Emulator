@@ -6,14 +6,14 @@
 WiFiServer debugServer(23); // Telnet port
 WiFiClient debugClient;
 
+
 WiFiClient wifiClient;
 PubSubClient mqttClient;
 
-ModbusRTU modbus;
-ModbusIP victron; // Modbus TCP client
+DTSU666 dtsu666 = DTSU666(1); // Modbus RTU client for DTSU666 meter
 
-MeterData meterData;
+Victron victron; // Modbus TCP client
+
 
 bool otaReported = false;
-bool modbusInitialized = false;
 bool registersAdded = false;

@@ -18,28 +18,24 @@
 #include <WiFiUdp.h>
 
 #include "dprint.h"      // Debug print functions
-#include "modbus.h"      // Modbus handling functions
+#include "dtsu666.h"     // DTSU666 emulation Modbus handling functions
 #include "mqtt.h"        // MQTT handling functions
 #include "ota.h"         // OTA update handling functions
 #include "settings.h"    // Configuration header
-#include "smart_meter.h" // Smart meter data structure and functions
 #include "victron.h"     // Victron Modbus handling functions
 #include "web.h"         // Web server handling functions
 
 // ===================== Global Objects =====================
 
 
-extern WiFiServer debugServer; // Telnet port
+extern WiFiServer debugServer; // Telnet
 extern WiFiClient debugClient;
 
 extern WiFiClient wifiClient;
 extern PubSubClient mqttClient;
 
-extern ModbusRTU modbus;
-extern ModbusIP victron; // Modbus TCP client
-
-extern MeterData meterData;
+extern DTSU666 dtsu666;
+extern Victron victron;
 
 extern bool otaReported;
-extern bool modbusInitialized;
 extern bool registersAdded;
